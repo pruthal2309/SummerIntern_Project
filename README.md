@@ -21,15 +21,12 @@ cp .env.example .env
 python -m backend.main --pipeline
 
 # 4. Start the system
-#    (Run the API in one terminal, then launch the Streamlit UI in another)
-python -m backend.main --serve
+#    (Launch the Streamlit UI)
 streamlit run streamlit_app.py
 ```
 
 **Access the system:**
 - 🌐 **Web Interface**: http://localhost:3000
-- 📖 **API Docs**: http://localhost:8000/docs
-- ❤️ **Health Check**: http://localhost:8000/health
 
 ---
 
@@ -41,7 +38,7 @@ A complete **Retrieval-Augmented Generation (RAG) system** for querying legal an
 - ✅ **Semantic search** using FAISS vector database
 - ✅ **LLM-powered answers** via Groq API (Llama 3.3 70B)
 - ✅ **Modern web interface** for easy interaction
-- ✅ **FastAPI backend** with full documentation
+- ✅ **Streamlit backend** with integrated RAG pipeline
 - ✅ **Local-first setup** (no Docker required)
 
 ---
@@ -67,12 +64,11 @@ A complete **Retrieval-Augmented Generation (RAG) system** for querying legal an
 | Component | Technology | Purpose |
 |-----------|------------|---------|
 | **Backend** | Python 3.8+ | Core application |
-| **API Framework** | FastAPI | REST API server |
-| **Web Server** | Uvicorn | ASGI server |
+| **Web Framework** | Streamlit | Integrated UI and RAG |
 | **Embeddings** | sentence-transformers | Semantic vectors |
 | **Vector DB** | FAISS | Similarity search |
 | **LLM** | Groq (Llama 3.3 70B) | Answer generation |
-| **Frontend** | HTML/CSS/JS | User interface |
+| **Frontend** | Streamlit | User interface |
 
 ---
 
@@ -81,10 +77,6 @@ A complete **Retrieval-Augmented Generation (RAG) system** for querying legal an
 ```
 hr-compliance-rag/
 ├── backend/                    # 🎯 All Python backend code
-│   ├── api/                    # FastAPI application
-│   │   ├── app.py             # Main FastAPI app
-│   │   ├── routes.py          # API endpoints
-│   │   └── schemas.py         # Pydantic models
 │   ├── ingestion/             # Data processing
 │   │   ├── loaders.py         # Document loaders
 │   │   ├── chunker.py         # Text chunking
@@ -92,15 +84,13 @@ hr-compliance-rag/
 │   │   └── metadata_builder.py
 │   ├── vectorstore/           # Vector operations
 │   │   ├── embedding_generator.py
-│   │   ├── build_index.py     # FAISS index builder
-│   │   ├── retriever.py       # Semantic search
-│   │   └── metadata_filter.py
 │   ├── rag/                   # RAG pipeline
 │   │   ├── rag_pipeline.py    # Main orchestrator
 │   │   ├── retrieval_service.py
 │   │   ├── llm_service.py     # Groq integration
-│   │   ├── prompt_builder.py
-│   │   └── evaluation.py
+│   │   └── prompt_builder.py
+│   ├── config.py              # Configuration
+│   └── main.py                # CLI and RAG query functions
 │   ├── config.py              # Configuration management
 │   └── main.py                # Backend entry point
 ├── frontend/                   # Web interface

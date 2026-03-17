@@ -52,10 +52,7 @@ python -m backend.main --pipeline
 ### 4. Start the System
 
 ```bash
-# Start API server (in one terminal)
-python -m backend.main --serve
-
-# Start the Streamlit UI (in another terminal)
+# Start the Streamlit application
 streamlit run streamlit_app.py
 ```
 
@@ -64,15 +61,6 @@ streamlit run streamlit_app.py
 ## 🐛 Troubleshooting
 
 ### Common Issues
-
-**"API Offline" in web interface**
-```bash
-# Check if API is running
-curl http://localhost:8000/health
-
-# Restart API server
-python -m backend.main --serve
-```
 
 **Import errors**
 ```bash

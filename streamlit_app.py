@@ -5,7 +5,7 @@ council decisions, import licences and legal documents.
 """
 
 import streamlit as st
-import requests
+# import requests  # Removed - no API calls
 import time
 import json
 from datetime import datetime
@@ -17,9 +17,7 @@ import plotly.express as px
 # ──────────────────────────────────────────────
 # Configuration
 # ──────────────────────────────────────────────
-API_BASE = "http://localhost:8000"
-HEALTH_ENDPOINT = f"{API_BASE}/health"
-QUERY_ENDPOINT = f"{API_BASE}/query"
+from backend.main import query_rag
 
 EXAMPLE_QUERIES = [
     "What does the council decision say about excessive deficit?",
@@ -395,23 +393,13 @@ if "current_page" not in st.session_state:
 # Helper functions
 # ──────────────────────────────────────────────
 def check_api_health() -> str:
-    """Return 'online', 'offline', or 'checking'."""
-    try:
-        r = requests.get(HEALTH_ENDPOINT, timeout=4)
-        return "online" if r.ok else "offline"
-    except Exception:
-        return "offline"
+    """Return 'online' since RAG is integrated."""
+    return "online"
 
 
 def query_api(question: str, top_k: int = 5) -> dict:
-    """Send a question to the RAG backend and return the JSON response."""
-    r = requests.post(
-        QUERY_ENDPOINT,
-        json={"question": question, "top_k": top_k},
-        timeout=60,
-    )
-    r.raise_for_status()
-    return r.json()
+    """Query the RAG system directly."""
+    return query_rag(question=question, top_k=top_k)
 
 
 def render_status_badge(status: str):

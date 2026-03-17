@@ -6,6 +6,7 @@ Handles pipeline execution and API server startup
 import os
 import sys
 import argparse
+from typing import Dict, Optional
 
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -73,6 +74,14 @@ def run_pipeline(skip_week1=False, skip_week2=False):
         print("\n⏭️  Skipping Week 2 (Embeddings & Index)")
     
     print("\n🎉 Pipeline completed successfully!")
+
+
+def query_rag(question: str, top_k: int = 5, filters: Optional[Dict] = None) -> Dict:
+    """Query the RAG system directly (for Streamlit integration)"""
+    from backend.rag.rag_pipeline import RAGPipeline
+    
+    pipeline = RAGPipeline()
+    return pipeline.answer(question=question, top_k=top_k, filters=filters)
 
 
 def run_server(host=None, port=None):

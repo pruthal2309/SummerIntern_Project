@@ -1,7 +1,7 @@
-# Core Web Framework
-fastapi==0.115.6
-uvicorn==0.32.1
-python-multipart==0.0.19
+# Core Web Framework (Removed - using Streamlit only)
+# fastapi==0.115.6
+# uvicorn==0.32.1
+# python-multipart==0.0.19
 pydantic>=2.6.0
 
 # RAG Core Dependencies
@@ -36,7 +36,7 @@ plotly>=5.18.0
 # Utilities
 tqdm>=4.65.0
 python-dotenv>=1.0.0
-requests>=2.31.0
+# requests>=2.31.0
 
 # Development (Optional)
 jupyter>=1.0.0
