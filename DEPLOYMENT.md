@@ -1,74 +1,20 @@
 # 🚀 Deployment Guide
 
-Complete guide for deploying the HR & Compliance RAG System to production.
+This project is designed to run locally without Docker.
 
 ---
 
 ## 📋 Prerequisites
 
-### Required Software
-- **Docker** (20.10+)
-- **Docker Compose** (2.0+)
-- **Git**
-
-### Required Configuration
-- **Groq API Key** from https://console.groq.com/
-- **Minimum 4GB RAM** (8GB recommended)
-- **2GB free disk space**
+- Python 3.8 or higher
+- pip package manager
+- Git (optional)
+- 4GB RAM minimum (8GB recommended)
+- Groq API Key (https://console.groq.com/)
 
 ---
 
-## 🐳 Docker Deployment (Recommended)
-
-### Quick Start
-
-**Linux/Mac:**
-```bash
-chmod +x deploy.sh
-./deploy.sh
-```
-
-**Windows:**
-```powershell
-.\deploy.ps1
-```
-
-### Manual Docker Deployment
-
-1. **Build the images:**
-```bash
-docker-compose build
-```
-
-2. **Start the services:**
-```bash
-docker-compose up -d
-```
-
-3. **Check status:**
-```bash
-docker-compose ps
-docker-compose logs -f
-```
-
-4. **Access the application:**
-- Frontend: http://localhost:3000
-- API: http://localhost:8000
-- API Docs: http://localhost:8000/docs
-
-### Stop Services
-```bash
-docker-compose down
-```
-
-### Restart Services
-```bash
-docker-compose restart
-```
-
----
-
-## 🖥️ Local Deployment (Without Docker)
+## 🖥️ Local Deployment
 
 ### 1. Setup Environment
 
@@ -100,121 +46,48 @@ cp .env.example .env
 
 ```bash
 # Process documents and build vector database
-python main.py
+python -m backend.main --pipeline
 ```
 
 ### 4. Start the System
 
 ```bash
-# Start API + Frontend
-python start_full_system.py
+# Start API server (in one terminal)
+python -m backend.main --serve
+
+# Start the Streamlit UI (in another terminal)
+streamlit run streamlit_app.py
 ```
 
 ---
 
-## ☁️ Cloud Deployment
+## 🐛 Troubleshooting
 
-### AWS Deployment
+### Common Issues
 
-#### Using EC2
-
-1. **Launch EC2 Instance:**
-   - AMI: Ubuntu 22.04 LTS
-   - Instance Type: t3.medium (minimum)
-   - Storage: 20GB
-   - Security Group: Open ports 80, 443, 8000, 3000
-
-2. **Connect and Setup:**
+**"API Offline" in web interface**
 ```bash
-# SSH into instance
-ssh -i your-key.pem ubuntu@your-instance-ip
+# Check if API is running
+curl http://localhost:8000/health
 
-# Install Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo usermod -aG docker ubuntu
-
-# Install Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-
-# Clone repository
-git clone <your-repo-url>
-cd enterprise-hr-compliance-RAG-pipeline-system-main
-
-# Setup environment
-cp .env.example .env
-nano .env  # Add your API key
-
-# Deploy
-./deploy.sh
+# Restart API server
+python -m backend.main --serve
 ```
 
-#### Using ECS (Elastic Container Service)
-
-1. **Push image to ECR:**
+**Import errors**
 ```bash
-aws ecr create-repository --repository-name hr-compliance-rag
-docker tag hr-compliance-rag:latest <account-id>.dkr.ecr.<region>.amazonaws.com/hr-compliance-rag:latest
-docker push <account-id>.dkr.ecr.<region>.amazonaws.com/hr-compliance-rag:latest
+pip install -r requirements.txt
 ```
 
-2. **Create ECS Task Definition and Service**
+**No results for queries**
+- Use queries about EU regulations, not HR policies
+- Try the provided example queries first
 
-### Google Cloud Platform (GCP)
-
-#### Using Cloud Run
-
+**Missing data files**
 ```bash
-# Build and push to Container Registry
-gcloud builds submit --tag gcr.io/<project-id>/hr-compliance-rag
-
-# Deploy to Cloud Run
-gcloud run deploy hr-compliance-rag \
-  --image gcr.io/<project-id>/hr-compliance-rag \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --set-env-vars GROQ_API_KEY=<your-key>
+# Run the complete pipeline
+python -m backend.main --pipeline
 ```
-
-### Azure Deployment
-
-#### Using Azure Container Instances
-
-```bash
-# Create resource group
-az group create --name hr-rag-rg --location eastus
-
-# Create container
-az container create \
-  --resource-group hr-rag-rg \
-  --name hr-compliance-rag \
-  --image <your-registry>/hr-compliance-rag:latest \
-  --dns-name-label hr-rag-app \
-  --ports 8000 3000 \
-  --environment-variables GROQ_API_KEY=<your-key>
-```
-
-### Heroku Deployment
-
-```bash
-# Login to Heroku
-heroku login
-
-# Create app
-heroku create hr-compliance-rag
-
-# Set environment variables
-heroku config:set GROQ_API_KEY=your_key
-
-# Deploy
-git push heroku main
-```
-
----
-
-## 🔒 Production Configuration
 
 ### Environment Variables
 
@@ -272,29 +145,21 @@ FAISS_INDEX_TYPE=flat
 ```bash
 # API Health
 curl http://localhost:8000/health
-
-# Docker Health
-docker-compose ps
 ```
 
 ### View Logs
 
+When running locally, logs stream directly to the terminal where the API is running:
+
 ```bash
-# All services
-docker-compose logs -f
-
-# Specific service
-docker-compose logs -f rag-api
-
-# Last 100 lines
-docker-compose logs --tail=100
+python -m backend.main --serve
 ```
 
-### Monitoring Tools
+To capture logs to a file:
 
-- **Prometheus** for metrics
-- **Grafana** for visualization
-- **ELK Stack** for log aggregation
+```bash
+python -m backend.main --serve 2>&1 | tee api.log
+```
 
 ---
 
@@ -306,10 +171,7 @@ docker-compose logs --tail=100
 # Pull latest code
 git pull origin main
 
-# Rebuild and restart
-docker-compose down
-docker-compose build
-docker-compose up -d
+# Restart the API server (stop and rerun)
 ```
 
 ### Backup Data
@@ -326,80 +188,37 @@ aws s3 cp backup-$(date +%Y%m%d).tar.gz s3://your-bucket/backups/
 
 ```bash
 # Rebuild vector index
-docker-compose exec rag-api python main.py --no-week1
+python -m backend.main --pipeline --no-week1
 ```
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Container Won't Start
+### Application Won't Start
 
 ```bash
-# Check logs
-docker-compose logs rag-api
+# Check if the API is running
+curl http://localhost:8000/health
 
-# Check if ports are in use
-netstat -an | grep 8000
-netstat -an | grep 3000
-
-# Restart services
-docker-compose restart
+# Restart the API
+python -m backend.main --serve
 ```
-
 ### API Not Responding
 
 ```bash
 # Check health
 curl http://localhost:8000/health
 
-# Check container status
-docker-compose ps
-
 # Restart API
-docker-compose restart rag-api
+python -m backend.main --serve
 ```
-
 ### Out of Memory
 
 ```bash
-# Increase Docker memory limit
-# Docker Desktop > Settings > Resources > Memory
-
-# Or reduce batch size in .env
+# Reduce batch size in .env
 BATCH_SIZE=16
 ```
-
----
-
-## 📈 Scaling
-
-### Horizontal Scaling
-
-```yaml
-# docker-compose.yml
-services:
-  rag-api:
-    deploy:
-      replicas: 3
-```
-
-### Load Balancing
-
-Use Nginx or cloud load balancers to distribute traffic across multiple instances.
-
-### Caching
-
-Implement Redis for caching frequent queries:
-
-```yaml
-services:
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
-```
-
 ---
 
 ## ✅ Production Checklist
@@ -420,7 +239,7 @@ services:
 ## 📞 Support
 
 For deployment issues:
-1. Check logs: `docker-compose logs -f`
+1. Check logs in the terminal where the API is running
 2. Verify environment variables
 3. Check system resources
 4. Review error messages

@@ -27,10 +27,12 @@ Get your API key from: https://console.groq.com/
 ### 4. Run the System
 ```bash
 # First time: Run complete pipeline
-python main.py
+python -m backend.main --pipeline
 
-# Start the system (API + Frontend)
-python start_full_system.py
+# Start the system
+# (Run API in one terminal; Streamlit UI in another)
+python -m backend.main --serve
+streamlit run streamlit_app.py
 ```
 
 ### 5. Access the System
@@ -51,7 +53,7 @@ Edit `.env` file and add your Groq API key from https://console.groq.com/
 ### No Data Files
 Run the complete pipeline first:
 ```bash
-python main.py
+python -m backend.main --pipeline
 ```
 
 That's it! The system should now be running with a modern web interface. 

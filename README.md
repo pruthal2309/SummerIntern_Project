@@ -18,10 +18,12 @@ cp .env.example .env
 # Edit .env and add your GROQ_API_KEY
 
 # 3. Run pipeline (first time only)
-python main.py --pipeline
+python -m backend.main --pipeline
 
-# 4. Start the complete system
-python start_full_system.py
+# 4. Start the system
+#    (Run the API in one terminal, then launch the Streamlit UI in another)
+python -m backend.main --serve
+streamlit run streamlit_app.py
 ```
 
 **Access the system:**
@@ -40,7 +42,7 @@ A complete **Retrieval-Augmented Generation (RAG) system** for querying legal an
 - ✅ **LLM-powered answers** via Groq API (Llama 3.3 70B)
 - ✅ **Modern web interface** for easy interaction
 - ✅ **FastAPI backend** with full documentation
-- ✅ **Docker support** for easy deployment
+- ✅ **Local-first setup** (no Docker required)
 
 ---
 
@@ -108,11 +110,12 @@ hr-compliance-rag/
 ├── data/                       # Data storage
 │   ├── raw/                   # Input documents (3000+ files)
 │   └── processed/             # Generated embeddings & indexes
-├── main.py                     # Root entry point
-├── start_full_system.py        # Complete system launcher
+├── scripts/                   # Helper launch scripts
+│   ├── main.py                # Backend CLI entry point
+│   └── start_full_system.py   # Complete system launcher
+├── streamlit_app.py           # Streamlit UI entry point
 ├── requirements.txt            # Python dependencies
 ├── .env                        # Environment variables
-├── Dockerfile                  # Docker configuration
 └── README.md                   # This file
 ```
 
@@ -162,7 +165,7 @@ hr-compliance-rag/
 
 5. **Run the pipeline** (first time only)
    ```bash
-   python main.py --pipeline
+   python -m backend.main --pipeline
    ```
    
    This will:
@@ -173,7 +176,11 @@ hr-compliance-rag/
 
 6. **Start the system**
    ```bash
-   python start_full_system.py
+   # In one terminal, start the API server
+   python -m backend.main --serve
+
+   # In another terminal, start the Streamlit UI
+   streamlit run streamlit_app.py
    ```
 
 ---
@@ -184,25 +191,27 @@ hr-compliance-rag/
 
 ```bash
 # Run complete pipeline
-python main.py --pipeline
+python -m backend.main --pipeline
 
 # Skip Week 1 (if already done)
-python main.py --pipeline --no-week1
+python -m backend.main --pipeline --no-week1
 
 # Start API server only
-python main.py --serve
+python -m backend.main --serve
 
 # Start API on custom host/port
-python main.py --serve --host 0.0.0.0 --port 8080
+python -m backend.main --serve --host 0.0.0.0 --port 8080
 
 # Show configuration
-python main.py --config
+python -m backend.main --config
 
 # Validate configuration
-python main.py --validate
+python -m backend.main --validate
 
-# Start complete system (API + Frontend)
-python start_full_system.py
+# Start system (API + Streamlit UI)
+# (use two terminals)
+python -m backend.main --serve
+streamlit run streamlit_app.py
 ```
 
 ### Web Interface
@@ -257,49 +266,9 @@ Visit http://localhost:8000/docs for Swagger UI
 
 ---
 
-## 🐳 Docker Deployment
+## 🧩 Local-Only Deployment
 
-### Build Docker image
-
-```bash
-docker build -t hr-compliance-rag .
-```
-
-### Run container
-
-```bash
-docker run -p 8000:8000 \
-  -e GROQ_API_KEY=your_key_here \
-  -v $(pwd)/data:/app/data \
-  hr-compliance-rag
-```
-
-### Docker Compose
-
-```yaml
-version: '3.8'
-
-services:
-  backend:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - GROQ_API_KEY=${GROQ_API_KEY}
-    volumes:
-      - ./data:/app/data
-    restart: unless-stopped
-
-  frontend:
-    image: python:3.10-slim
-    working_dir: /app/frontend
-    command: python -m http.server 3000
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app/frontend
-    restart: unless-stopped
-```
+This project is designed to run locally without Docker. Use the CLI commands in the **Usage** section above to start the API and Streamlit UI.
 
 ---
 
@@ -353,7 +322,7 @@ CHUNK_OVERLAP=200
 curl http://localhost:8000/health
 
 # Restart API server
-python main.py --serve
+python -m backend.main --serve
 ```
 
 **Import errors**
@@ -368,13 +337,13 @@ pip install -r requirements.txt
 **Missing data files**
 ```bash
 # Run the complete pipeline
-python main.py --pipeline
+python -m backend.main --pipeline
 ```
 
 **Configuration errors**
 ```bash
 # Validate configuration
-python main.py --validate
+python -m backend.main --validate
 
 # Check .env file has GROQ_API_KEY
 ```
@@ -386,8 +355,8 @@ python main.py --validate
 - [ ] Install Python 3.8+
 - [ ] Install dependencies: `pip install -r requirements.txt`
 - [ ] Configure `.env` with API keys
-- [ ] Run pipeline: `python main.py --pipeline`
-- [ ] Test API: `python main.py --serve`
+- [ ] Run pipeline: `python -m backend.main --pipeline`
+- [ ] Test API: `python -m backend.main --serve`
 - [ ] Test frontend: Open http://localhost:3000
 - [ ] Configure firewall for ports 3000, 8000
 - [ ] Set up reverse proxy (nginx/Apache)

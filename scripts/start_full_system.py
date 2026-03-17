@@ -11,6 +11,10 @@ import threading
 import webbrowser
 from pathlib import Path
 
+# Ensure we always run from repository root (so relative paths work)
+REPO_ROOT = Path(__file__).resolve().parents[1]
+os.chdir(REPO_ROOT)
+
 def check_system_ready():
     """Check if the system is ready"""
     print("🔍 Checking system readiness...")
@@ -34,8 +38,9 @@ def start_api_server():
     print("🚀 Starting RAG API Server...")
     
     try:
+        # Use the backend package entrypoint to avoid depending on a top-level script.
         process = subprocess.Popen([
-            sys.executable, "main.py", "--serve"
+            sys.executable, "-m", "backend.main", "--serve"
         ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         
         print("⏳ Waiting for API server to initialize...")
@@ -83,7 +88,7 @@ def main():
     # Check if system is ready
     if not check_system_ready():
         print("\n⚠️  System not ready. Please run the pipeline first:")
-        print("   python main.py --pipeline")
+        print("   python -m backend.main --pipeline")
         return
     
     print("\n📋 Starting complete system...")
