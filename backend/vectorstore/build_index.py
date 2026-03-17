@@ -10,6 +10,7 @@ import faiss
 from typing import List, Dict, Tuple, Optional
 import pandas as pd
 
+from backend.config import config
 from backend.vectorstore.embedding_generator import (
     load_embedding_model,
     generate_embeddings_from_sources,
@@ -26,7 +27,7 @@ def load_chunks_from_week1() -> Dict[str, List[Dict]]:
     print("Loading chunks from Week 1 pipeline...")
     
     # Load metadata
-    metadata_path = "data/metadata.csv"
+    metadata_path = config.METADATA_FILE
     if not os.path.exists(metadata_path):
         raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
     
@@ -50,7 +51,7 @@ def load_chunks_from_week1() -> Dict[str, List[Dict]]:
         for idx, row in source_docs.iterrows():
             # Reconstruct file path based on doc_id
             doc_num = row['doc_id'].split('_')[-1]  # Extract number from doc_id
-            file_path = f"data/raw/{source}/doc_{doc_num}.txt"
+            file_path = os.path.join(config.RAW_DATA_DIR, source, f"doc_{doc_num}.txt")
             
             if os.path.exists(file_path):
                 try:
