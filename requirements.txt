@@ -1,0 +1,42 @@
+# Core Web Framework
+fastapi==0.115.6
+uvicorn==0.32.1
+python-multipart==0.0.19
+
+# RAG Core Dependencies
+numpy>=1.26.4
+pandas>=2.2.2
+faiss-cpu>=1.7.0
+
+# Embeddings and ML
+torch>=2.0.0
+transformers>=4.30.0
+sentence-transformers>=2.2.0
+huggingface-hub>=0.20.0
+tokenizers>=0.15.0
+safetensors>=0.4.0
+
+# LLM Integration
+groq>=0.4.0
+
+# Text Processing
+pypdf>=3.0.0
+python-docx>=1.1.0
+docx2txt>=0.8
+beautifulsoup4>=4.12.0
+
+# Data Processing
+datasets>=2.14.0
+
+# Frontend
+streamlit>=1.30.0
+plotly>=5.18.0
+
+# Utilities
+tqdm>=4.65.0
+python-dotenv>=1.0.0
+requests>=2.31.0
+
+# Development (Optional)
+jupyter>=1.0.0
+notebook>=6.4.0

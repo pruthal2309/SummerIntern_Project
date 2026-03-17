@@ -1,0 +1,100 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Node & Frontend (React/Vite)
+node_modules/
+frontend/dist/
+dist-ssr/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.eslintcache
+.vite/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Data files (Large generated data files)
+data/raw/
+data/processed/
+
+# Prevent ignoring critical root files like package.json, requirements.txt, by targeting specific data formats explicitly within the data directory instead of globally
+data/**/*.csv
+data/**/*.json
+data/**/*.pdf
+data/**/*.txt
+data/**/*.docx
+
+# Keeps the data folder structure in place
+!data/.gitkeep
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Logs
+*.log
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Cache
+.cache/
+*.cache
+
+# Model files
+*.bin
+*.pt
+*.pth
+*.h5
+*.pkl
+*.pickle
+
+# FAISS index files
+*.index
+*.faiss
+
+# Temporary files
+*.tmp
+*.temp
